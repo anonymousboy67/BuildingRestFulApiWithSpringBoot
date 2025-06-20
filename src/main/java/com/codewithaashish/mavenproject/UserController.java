@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,6 +36,18 @@ public class UserController{
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id){
         return users.stream().filter(user->user.getId().equals(id)).findFirst().orElse(null);
+    }
+
+
+    @GetMapping("/search/{name}")
+    public List<User> searchUserByName(@PathVariable String name){
+        return users.stream().filter(user->user.getName().toLowerCase().contains(name.toLowerCase())).toList();
+    }
+
+
+    @GetMapping("/city/{city}")
+    public List<User> getUsersByCity(@PathVariable String city){
+        return users.stream().filter( user -> user.getCity().equalsIgnoreCase(city)).toList();
     }
 
 }
