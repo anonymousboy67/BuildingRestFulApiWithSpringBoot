@@ -1,6 +1,7 @@
 package com.codewithaashish.mavenproject;
 
 
+import com.codewithaashish.mavenproject.dto.UserDto;
 import com.codewithaashish.mavenproject.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,15 @@ public class UserController{
 
 
     // GET/api/users- GET all users
+//    @GetMapping
+//    public List<User> getAllUsers(){
+//        return users;
+//    }
+
+
     @GetMapping
-    public List<User> getAllUsers(){
-        return users;
+    public List<UserDto> getAllUsers(){
+        return users.stream().map(this::convertToDto).toList();
     }
 
     //Get /api/users/{id} - GET user by id
@@ -50,11 +57,19 @@ public class UserController{
     }
 
     //Add a POST method for creating users
+//    @PostMapping
+//    public ResponseEntity<User> createUser(@RequestBody User user){
+//        user.setId(nextId++);
+//        users.add(user);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+//    }
+
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user){
+    public ResponseEntity<UserDto> createUser(@RequestBody CreateUserRequest request){
+        User user=convertToEntity(request);
         user.setId(nextId++);
         users.add(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDto(user));
     }
 
 
@@ -68,6 +83,17 @@ public class UserController{
     @GetMapping("/city/{city}")
     public List<User> getUsersByCity(@PathVariable String city){
         return users.stream().filter( user -> user.getCity().equalsIgnoreCase(city)).toList();
+    }
+
+
+    private UserDto convertToDto(User user){
+        return new UserDto(user.getId(), user.getName(), user.getEmail(),
+        user.getAge(), user.getCity());
+    }
+
+    private User convertToEntity(CreateUserRequest request){
+        return new User(null, request.getName(), request.getEmail(), request.getAge(), request.getCity());
+
     }
 
 }
