@@ -1,0 +1,40 @@
+package com.codewithaashish.mavenproject;
+
+
+import com.codewithaashish.mavenproject.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController{
+
+    private List<User> users=new ArrayList<>();
+    private Long nextId=1L;
+
+    public UserController(){
+        users.add(new User(nextId++, "Aashish Adhikari", "aashishad67@gmail.com", 23, "Kathmandu"));
+        users.add(new User(nextId++, "Simant Neupane", "simantneupane56@gmail.com", 22, "Kathmandu"));
+        users.add(new User(nextId++, "Prashant Dhakal", "prashant34@gmail.com", 21, "Kathmandu"));
+
+    }
+
+
+    // GET/api/users- GET all users
+    @GetMapping
+    public List<User> getAllUsers(){
+        return users;
+    }
+
+    //Get /api/users/{id} - GET user by id
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id){
+        return users.stream().filter(user->user.getId().equals(id)).findFirst().orElse(null);
+    }
+
+}
